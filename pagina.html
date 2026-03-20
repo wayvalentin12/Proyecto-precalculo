@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<!-- ============================================================
+     PROYECCIÓN DE CAPITAL - ITLA Grupo 4
+     Hecho con: HTML + CSS + JavaScript
+     
+     ESTRUCTURA DEL ARCHIVO:
+     1. <head>   → configuración e importaciones
+     2. <style>  → todo el diseño visual (CSS)
+     3. <body>   → todo el contenido visible (HTML)
+     4. <script> → toda la lógica matemática (JavaScript)
+============================================================ -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyección de Capital · ITLA</title>
+
+  <!-- Importamos una fuente de Google para que se vea mejor -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Importamos Chart.js, la librería que dibuja la gráfica -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+
+
+<!-- ============================================================
+     CSS - DISEÑO VISUAL
+     Aquí controlamos colores, tamaños, espacios y animaciones
+============================================================ -->
+<style>
+
+  /* --- Variables de color: cambia aquí y cambia en toda la página --- */
+  :root {
+    --color-fondo:       #0d1117;
+    --color-tarjeta:     #161b22;
+    --color-borde:       #30363d;
+    --color-dorado:      #f0b429;
+    --color-verde:       #3fb950;
+    --color-azul:        #58a6ff;
+    --color-texto:       #e6edf3;
+    --color-texto-suave: #8b949e;
+    --radio-borde:       10px;
+  }
+
+  /* --- Reset: borramos márgenes por defecto del navegador --- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* --- Estilo general del cuerpo de la página --- */
+  body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* --- Contenedor central que limita el ancho máximo --- */
+  .contenedor {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ---- ENCABEZADO ---- */
+  .encabezado {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  .encabezado .etiqueta {
+    display: inline-block;
+    background-color: rgba(240, 180, 41, 0.15);
+    color: var(--color-dorado);
+    border: 1px solid rgba(240, 180, 41, 0.4);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .encabezado h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-texto);
+    margin-bottom: 12px;
+  }
+
+  .encabezado p {
+    color: var(--color-texto-suave);
+    max-width: 550px;
+    margin: 0 auto 20px;
+  }
+
+  /* Cuadro con los nombres del equipo */
+  .equipo {
+    display: inline-block;
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 14px 24px;
+    font-size: 13px;
+    color: var(--color-texto-suave);
+    line-height: 1.9;
+  }
+
+  /* ---- SECCIÓN DE LA FÓRMULA (centrada) ---- */
+  .seccion-formula {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-left: 4px solid var(--color-dorado);
+    border-radius: var(--radio-borde);
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .formula-texto h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-dorado);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .formula-texto p {
+    font-size: 13px;
+    color: var(--color-texto-suave);
+    text-align: center;
+  }
+
+  /* El bloque donde se muestra la fórmula matemática */
+  .formula-matematica {
+    background-color: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 16px 28px;
+    text-align: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .formula-matematica .formula {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-dorado);
+    font-family: 'Courier New', monospace;
+  }
+
+  .formula-matematica .variables {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--color-texto-suave);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .formula-matematica .variables span {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 6px;
+    padding: 2px 10px;
+    color: var(--color-azul);
+  }
+
+  /* ---- ETIQUETA DE SECCIÓN ---- */
+  .etiqueta-seccion {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-azul);
+    margin-bottom: 16px;
+  }
+
+  /* ---- CALCULADORA ---- */
+  /* Dividimos en 2 columnas: inputs | resultados */
+  .calculadora-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  /* Tarjeta reutilizable */
+  .tarjeta {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 28px;
+  }
+
+  .tarjeta h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-dorado);
+    margin-bottom: 24px;
+  }
+
+  /* --- Campos del formulario --- */
+  .campo {
+    margin-bottom: 20px;
+  }
+
+  .campo label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+    margin-bottom: 8px;
+  }
+
+  /* Input de número */
+  .campo input[type="number"],
+  .campo select {
+    width: 100%;
+    background-color: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 11px 14px;
+    color: var(--color-texto);
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .campo input[type="number"]:focus,
+  .campo select:focus {
+    border-color: var(--color-dorado);
+  }
+
+  /* Botones de frecuencia (Mensual / Anual) */
+  .btn-grupo {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .btn-opcion {
+    flex: 1;
+    padding: 9px;
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    color: var(--color-texto-suave);
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  /* Clase que se agrega al botón seleccionado */
+  .btn-opcion.activo {
+    background-color: rgba(240, 180, 41, 0.15);
+    border-color: var(--color-dorado);
+    color: var(--color-dorado);
+    font-weight: 600;
+  }
+
+  /* Botón principal de calcular */
+  .btn-calcular {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--color-dorado);
+    border: none;
+    border-radius: var(--radio-borde);
+    color: #0d1117;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .btn-calcular:hover  { opacity: 0.9; transform: translateY(-1px); }
+  .btn-calcular:active { transform: translateY(0); }
+
+  /* --- Panel de resultados --- */
+  .resultado-principal {
+    text-align: center;
+    padding: 24px 0;
+    border-top: 1px solid var(--color-borde);
+    border-bottom: 1px solid var(--color-borde);
+    margin-bottom: 20px;
+  }
+
+  .resultado-principal .etiqueta-res {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+    margin-bottom: 8px;
+  }
+
+  .resultado-principal .monto-final {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-verde);
+  }
+
+  /* Cuadrícula de métricas secundarias */
+  .metricas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .metrica {
+    background-color: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 12px 14px;
+  }
+
+  .metrica .m-etiqueta {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+    margin-bottom: 4px;
+  }
+
+  .metrica .m-valor {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-texto);
+  }
+
+  .m-valor.verde  { color: var(--color-verde); }
+  .m-valor.azul   { color: var(--color-azul); }
+
+  /* ---- GRÁFICA ---- */
+  .grafica-tarjeta {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 28px;
+    margin-bottom: 40px;
+  }
+
+  .grafica-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .grafica-cabecera h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-dorado);
+  }
+
+  .grafica-cabecera span {
+    font-size: 12px;
+    color: var(--color-texto-suave);
+  }
+
+  /* ---- TABLA ---- */
+  .tabla-tarjeta {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .tabla-cabecera {
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid var(--color-borde);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tabla-cabecera h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-dorado);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    background-color: var(--color-fondo);
+    padding: 12px 18px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--color-texto-suave);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-borde);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background-color: rgba(240, 180, 41, 0.04); }
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody td {
+    padding: 13px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--color-texto-suave);
+  }
+
+  tbody td.verde { color: var(--color-verde); font-weight: 600; }
+  tbody td.azul  { color: var(--color-azul); }
+  tbody td.dorado { color: var(--color-dorado); }
+
+  /* Mini barra de progreso dentro de la tabla */
+  .barra-mini {
+    height: 5px;
+    background-color: var(--color-borde);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .barra-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-dorado), var(--color-verde));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* ---- TARJETAS DEL EQUIPO ---- */
+  .roles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .rol-tarjeta {
+    background-color: var(--color-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    padding: 22px;
+    transition: border-color 0.2s;
+  }
+
+  .rol-tarjeta:hover { border-color: rgba(240, 180, 41, 0.4); }
+
+  .rol-tarjeta .rol-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-dorado);
+    margin-bottom: 8px;
+  }
+
+  .rol-tarjeta .rol-desc {
+    font-size: 13px;
+    color: var(--color-texto-suave);
+    line-height: 1.6;
+  }
+
+  /* ---- RESPONSIVE: pantallas pequeñas ---- */
+  @media (max-width: 680px) {
+    .calculadora-grid { grid-template-columns: 1fr; }
+    .roles-grid       { grid-template-columns: 1fr; }
+    .seccion-formula  { flex-direction: column; }
+    .metricas         { grid-template-columns: 1fr; }
+    .encabezado h1    { font-size: 1.6rem; }
+  }
+
+</style>
+
+
+<!-- ============================================================
+     HTML - CONTENIDO VISIBLE
+     Cada sección tiene un comentario que explica qué es
+============================================================ -->
+<body>
+
+<div class="contenedor">
+
+  <!-- ── ENCABEZADO ── -->
+  <header class="encabezado">
+    <div class="etiqueta">Proyecto Precálculo Grupo 4</div>
+    <h1>Proyección de Capital a Largo Plazo</h1>
+    <p>Herramienta educativa que aplica funciones exponenciales para modelar el crecimiento del dinero mediante el interés compuesto.</p>
+    <div class="equipo">
+      <strong style="color: var(--color-texto);">Equipo:</strong><br>
+      Emmanuel Romero Espinal <br>
+      Wayner Consuegra <br>
+      Ricardo Díaz<br>
+      Shania Martinez Mejia <br>
+      <strong style="color: var(--color-texto);">Asignatura:</strong><br>
+      Pre-calculo <br>
+      <strong style="color: var(--color-texto);">Profesor:</strong><br>
+      Prof. Luis David Mercedes <br>
+    </div>
+  </header>
+
+  <!-- ── SECCIÓN DE LA FÓRMULA ── -->
+  <div class="seccion-formula">
+    <div class="formula-texto">
+      <h3>Fundamento Matemático: Función Exponencial</h3>
+      <p>
+        El interés compuesto es una aplicación directa de la función exponencial
+        <em>f(x) = a · bˣ</em>. El capital no crece de forma lineal — cada período
+        los intereses se calculan sobre el monto acumulado, generando una curva
+        con pendiente creciente.
+      </p>
+    </div>
+    <div class="formula-matematica">
+      <div class="formula">Cf = Ci × (1 + i)<sup style="font-size:1rem">n</sup></div>
+      <div class="variables">
+        <span>Cf = capital final</span>
+        <span>Ci = capital inicial</span>
+        <span>i = tasa</span>
+        <span>n = períodos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CALCULADORA ── -->
+  <div>
+    <div class="etiqueta-seccion">Calculadora interactiva</div>
+    <div class="calculadora-grid">
+
+      <!-- Panel izquierdo: entradas del usuario -->
+      <div class="tarjeta">
+        <h2>Ingresa los valores</h2>
+
+        <!-- Campo 1: capital inicial -->
+        <div class="campo">
+          <label>Depósito inicial (RD$)</label>
+          <input type="number" id="capital" value="800000" min="0" step="1000">
+        </div>
+
+        <!-- Campo 2: años de crecimiento -->
+        <div class="campo">
+          <label>Años de crecimiento</label>
+          <input type="number" id="anios" value="5" min="1" max="30" step="1">
+        </div>
+
+        <!-- Campo 3: tasa de interés -->
+        <div class="campo">
+          <label>Tasa de interés (%)</label>
+          <input type="number" id="tasa" value="7" min="1" max="30" step="0.5">
+        </div>
+
+        <!-- Campo 4: frecuencia de capitalización -->
+        <div class="campo">
+          <label>Frecuencia de capitalización</label>
+          <select id="frecuencia">
+            <option value="1">Anual</option>
+            <option value="2">Semestral</option>
+            <option value="4">Trimestral</option>
+            <option value="12" selected>Mensual</option>
+            <option value="365">Diaria</option>
+          </select>
+        </div>
+
+        <!-- Campo 5: aporte adicional -->
+        <div class="campo">
+          <label>Aporte adicional (RD$)</label>
+          <input type="number" id="aporte" value="100" min="0" step="100">
+        </div>
+
+        <!-- Campo 6: frecuencia del aporte con botones -->
+        <div class="campo">
+          <label>Frecuencia del aporte</label>
+          <div class="btn-grupo">
+            <button class="btn-opcion activo" id="btn-mensual" onclick="seleccionarAporte('mensual')">Mensual</button>
+            <button class="btn-opcion"        id="btn-anual"   onclick="seleccionarAporte('anual')">Anual</button>
+          </div>
+        </div>
+
+        <!-- Botón para ejecutar el cálculo -->
+        <button class="btn-calcular" onclick="calcular()">Calcular proyección</button>
+      </div>
+
+      <!-- Panel derecho: resultados -->
+      <div class="tarjeta">
+        <h2>Resultado</h2>
+
+        <!-- Resultado principal (capital final) -->
+        <div class="resultado-principal">
+          <div class="etiqueta-res">Capital final acumulado</div>
+          <div class="monto-final" id="resultadoFinal">RD$0</div>
+        </div>
+
+        <!-- Métricas secundarias -->
+        <div class="metricas">
+          <div class="metrica">
+            <div class="m-etiqueta">Capital inicial</div>
+            <div class="m-valor" id="resCapital">—</div>
+          </div>
+          <div class="metrica">
+            <div class="m-etiqueta">Años de crecimiento</div>
+            <div class="m-valor" id="resAnios">—</div>
+          </div>
+          <div class="metrica">
+            <div class="m-etiqueta">Tasa de interés</div>
+            <div class="m-valor" id="resTasa">—</div>
+          </div>
+          <div class="metrica">
+            <div class="m-etiqueta">Aportes totales</div>
+            <div class="m-valor azul" id="resAportes">—</div>
+          </div>
+          <div class="metrica">
+            <div class="m-etiqueta">Intereses ganados</div>
+            <div class="m-valor verde" id="resIntereses">—</div>
+          </div>
+          <div class="metrica">
+            <div class="m-etiqueta">Rentabilidad</div>
+            <div class="m-valor verde" id="resRentabilidad">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── GRÁFICA ── -->
+  <div class="grafica-tarjeta">
+    <div class="grafica-cabecera">
+      <h2>Curva de Crecimiento Exponencial</h2>
+      <span>Eje X = Años · Eje Y = Capital (RD$)</span>
+    </div>
+    <!-- Chart.js dibuja la gráfica dentro de este canvas -->
+    <canvas id="miGrafica" height="90"></canvas>
+  </div>
+
+  <!-- ── TABLA DE VALORES ── -->
+  <div class="tabla-tarjeta">
+    <div class="tabla-cabecera">
+      <h2>Desglose anual del capital</h2>
+      <span>Cortes cada 12 meses</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Año</th>
+          <th>Capital al inicio</th>
+          <th>Interés generado</th>
+          <th>Aportes del año</th>
+          <th>Capital acumulado</th>
+        </tr>
+      </thead>
+      <!-- El JavaScript llena este tbody automáticamente -->
+      <tbody id="cuerpoTabla"></tbody>
+    </table>
+  </div>
+
+  <!-- ── EQUIPO ── -->
+</div><!-- fin .contenedor -->
+
+
+<!-- ============================================================
+     JAVASCRIPT - LÓGICA Y MATEMÁTICA
+     Aquí vive la fórmula y todo lo que hace que la página
+     responda cuando el usuario interactúa con ella
+============================================================ -->
+<script>
+
+  // ── VARIABLES GLOBALES ──────────────────────────────────────
+  let grafica = null;          // guardamos la gráfica para poder actualizarla
+  let frecuenciaAporte = 'mensual'; // estado del botón de frecuencia
+
+  // ── FUNCIÓN: formatear número como moneda ───────────────────
+  // Convierte 1122041 → "RD$1,122,041"
+  function formatearMoneda(numero) {
+    return 'RD$' + Math.round(numero).toLocaleString('es-DO');
+  }
+
+  // ── FUNCIÓN: seleccionar frecuencia de aporte ───────────────
+  // Activa el botón correcto visualmente
+  function seleccionarAporte(tipo) {
+    frecuenciaAporte = tipo;
+
+    // Quitamos la clase "activo" de ambos botones
+    document.getElementById('btn-mensual').classList.remove('activo');
+    document.getElementById('btn-anual').classList.remove('activo');
+
+    // Se la ponemos solo al seleccionado
+    document.getElementById('btn-' + tipo).classList.add('activo');
+
+    calcular(); // recalculamos inmediatamente
+  }
+
+  // ── FUNCIÓN PRINCIPAL: calcular proyección ──────────────────
+  function calcular() {
+
+    // 1. Leemos los valores que el usuario ingresó
+    const capitalInicial  = parseFloat(document.getElementById('capital').value) || 0;
+    const anios           = parseInt(document.getElementById('anios').value);
+    const tasaAnual       = parseFloat(document.getElementById('tasa').value) / 100;
+    const periodosPorAnio = parseInt(document.getElementById('frecuencia').value);
+    const aportePor       = parseFloat(document.getElementById('aporte').value) || 0;
+
+    // 2. Convertimos el aporte a valor mensual según la frecuencia seleccionada
+    const aporteMensual = (frecuenciaAporte === 'mensual') ? aportePor : aportePor / 12;
+
+    // 3. Calculamos la tasa por período (ej: tasa mensual = tasa anual / 12)
+    const tasaPorPeriodo = tasaAnual / periodosPorAnio;
+
+    // 4. Total de períodos (ej: 5 años × 12 meses = 60 períodos)
+    const totalPeriodos = anios * periodosPorAnio;
+
+    // 5. Aporte por período (convertido según frecuencia de capitalización)
+    const aportePorPeriodo = aporteMensual * (12 / periodosPorAnio);
+
+    // ── CÁLCULO PERÍODO A PERÍODO ────────────────────────────
+    // Recorremos todos los períodos acumulando el capital
+    let capital = capitalInicial;
+    let totalAportes = 0;
+
+    // Arrays para la gráfica: un punto por año
+    const etiquetas = ['Año 0'];
+    const datosGrafica = [capitalInicial];
+
+    // Array para la tabla: un objeto por año
+    const datosTabla = [];
+
+    // Agrupamos los períodos en años
+    for (let anio = 1; anio <= anios; anio++) {
+      const capitalInicioAnio = capital;
+      let aportesEsteAnio = 0;
+
+      // Dentro de cada año, iteramos período a período
+      for (let p = 0; p < periodosPorAnio; p++) {
+        // Aplicamos la fórmula: capital × (1 + tasa_por_periodo)
+        capital = capital * (1 + tasaPorPeriodo) + aportePorPeriodo;
+        aportesEsteAnio += aportePorPeriodo;
+        totalAportes += aportePorPeriodo;
+      }
+
+      // Interés generado este año = capital nuevo - capital inicio - aportes
+      const interesEsteAnio = capital - capitalInicioAnio - aportesEsteAnio;
+
+      // Guardamos el punto para la gráfica
+      etiquetas.push('Año ' + anio);
+      datosGrafica.push(capital);
+
+      // Guardamos la fila para la tabla
+      datosTabla.push({
+        anio:          anio,
+        capitalInicio: capitalInicioAnio,
+        interes:       interesEsteAnio,
+        aportes:       aportesEsteAnio,
+        capitalFinal:  capital
+      });
+    }
+
+    // 6. Calculamos métricas finales
+    const capitalFinal   = capital;
+    const interesTotal   = capitalFinal - capitalInicial - totalAportes;
+    const rentabilidad   = capitalInicial > 0
+      ? ((capitalFinal - capitalInicial) / capitalInicial * 100).toFixed(2)
+      : 0;
+
+    // ── ACTUALIZAR RESULTADOS EN PANTALLA ───────────────────
+    animarNumero('resultadoFinal', capitalFinal);
+    document.getElementById('resCapital').textContent      = formatearMoneda(capitalInicial);
+    document.getElementById('resAnios').textContent        = anios + ' años';
+    document.getElementById('resTasa').textContent         = (tasaAnual * 100).toFixed(1) + '%';
+    document.getElementById('resAportes').textContent      = formatearMoneda(totalAportes);
+    document.getElementById('resIntereses').textContent    = '+' + formatearMoneda(interesTotal);
+    document.getElementById('resRentabilidad').textContent = '+' + rentabilidad + '%';
+
+    // ── DIBUJAR LA GRÁFICA ───────────────────────────────────
+    dibujarGrafica(etiquetas, datosGrafica);
+
+    // ── LLENAR LA TABLA ──────────────────────────────────────
+    llenarTabla(datosTabla, capitalFinal);
+  }
+
+  // ── FUNCIÓN: dibujar gráfica con Chart.js ──────────────────
+  function dibujarGrafica(etiquetas, datos) {
+    const canvas = document.getElementById('miGrafica');
+    const ctx = canvas.getContext('2d');
+
+    // Si ya existe una gráfica, la destruimos antes de crear la nueva
+    if (grafica) grafica.destroy();
+
+    grafica = new Chart(ctx, {
+      type: 'line',       // tipo: línea
+      data: {
+        labels: etiquetas,
+        datasets: [{
+          label: 'Capital acumulado',
+          data: datos,
+          borderColor: '#f0b429',          // color de la línea
+          backgroundColor: 'rgba(240,180,41,0.1)', // relleno bajo la línea
+          fill: true,
+          tension: 0.4,                    // curva suave
+          pointBackgroundColor: '#f0b429',
+          pointBorderColor: '#0d1117',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: { duration: 600 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#161b22',
+            borderColor: '#30363d',
+            borderWidth: 1,
+            titleColor: '#f0b429',
+            bodyColor: '#e6edf3',
+            padding: 12,
+            callbacks: {
+              // Formato del tooltip al pasar el mouse
+              label: function(ctx) {
+                return '  ' + formatearMoneda(ctx.parsed.y);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#8b949e', font: { family: 'Courier New', size: 11 } },
+            grid:  { color: 'rgba(48,54,61,0.6)' }
+          },
+          y: {
+            ticks: {
+              color: '#8b949e',
+              font: { family: 'Courier New', size: 11 },
+              // Abreviamos los números (ej: 1,000,000 → RD$1000k)
+              callback: function(valor) {
+                return 'RD$' + Math.round(valor / 1000) + 'k';
+              }
+            },
+            grid: { color: 'rgba(48,54,61,0.6)' }
+          }
+        }
+      }
+    });
+  }
+
+  // ── FUNCIÓN: llenar la tabla con los datos ──────────────────
+  function llenarTabla(datos, capitalMaximo) {
+    const tbody = document.getElementById('cuerpoTabla');
+    tbody.innerHTML = ''; // limpiamos las filas anteriores
+
+    datos.forEach(function(fila) {
+      // Calculamos el % de progreso respecto al capital final máximo
+      const porcentaje = Math.round((fila.capitalFinal / capitalMaximo) * 100);
+
+      // Creamos una fila HTML
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>Año ${fila.anio}</td>
+        <td>${formatearMoneda(fila.capitalInicio)}</td>
+        <td class="azul">+${formatearMoneda(fila.interes)}</td>
+        <td class="dorado">+${formatearMoneda(fila.aportes)}</td>
+        <td class="verde">${formatearMoneda(fila.capitalFinal)}</td>
+      `;
+      tbody.appendChild(tr); // agregamos la fila a la tabla
+    });
+  }
+
+  // ── FUNCIÓN: animar el número del resultado ─────────────────
+  // Hace que el número "cuente" desde 0 hasta el valor final
+  function animarNumero(idElemento, valorFinal) {
+    const elemento = document.getElementById(idElemento);
+    const duracion = 600;       // duración en milisegundos
+    const inicio = performance.now();
+
+    function paso(ahora) {
+      const progreso = Math.min((ahora - inicio) / duracion, 1);
+      // Función de easing: hace que sea lento al inicio y al final
+      const ease = 1 - Math.pow(1 - progreso, 3);
+      elemento.textContent = formatearMoneda(valorFinal * ease);
+      if (progreso < 1) requestAnimationFrame(paso);
+    }
+
+    requestAnimationFrame(paso);
+  }
+
+  // ── ESCUCHAR CAMBIOS EN LOS CONTROLES ──────────────────────
+  // Cada vez que el usuario mueve un slider o cambia un input,
+  // volvemos a calcular automáticamente
+
+  document.getElementById('capital').addEventListener('input', calcular);
+  document.getElementById('anios').addEventListener('input', calcular);
+  document.getElementById('tasa').addEventListener('input', calcular);
+  document.getElementById('frecuencia').addEventListener('change', calcular);
+  document.getElementById('aporte').addEventListener('input', calcular);
+
+  // ── CÁLCULO INICIAL al cargar la página ────────────────────
+  calcular();
+
+</script>
+
+</body>
+</html>
